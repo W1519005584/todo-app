@@ -1,0 +1,3 @@
+基于本次上传的上下文PROJECT_CONTEXT.md和当前进度CURRENT_TASK.md继续开发
+开发由你完全主导，内容如果过多输出需完整，方便整个复制
+

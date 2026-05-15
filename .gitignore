@@ -1,0 +1,37 @@
+# node_modules
+node_modules
+
+# pnpm
+.pnpm-store
+
+# logs
+*.log
+
+# env
+.env
+.env.local
+.env.*.local
+
+# build
+dist
+build
+
+# uni-app
+.unpackage
+
+# database
+*.db
+*.sqlite
+
+# mac
+.DS_Store
+
+# windows
+Thumbs.db
+
+# IDE
+.vscode
+.idea
+
+# coverage
+coverage
