@@ -4,12 +4,18 @@ import { createTodo, deleteTodo, getTodoList, updateTodo } from '../services/tod
 
 import { createTodoSchema, updateTodoSchema } from '../schemas/todo.schema';
 
+import { authMiddleware, type AuthVariables } from '../middlewares/auth.middleware';
 import { fail, success } from '../utils/response';
 
-const todoRoute = new Hono();
+const todoRoute = new Hono<{
+  Variables: AuthVariables;
+}>();
+
+todoRoute.use('*', authMiddleware);
 
 todoRoute.get('/', async c => {
-  const list = await getTodoList();
+  const userId = c.get('userId');
+  const list = await getTodoList(userId);
 
   return c.json(success(list));
 });
@@ -23,7 +29,8 @@ todoRoute.post('/', async c => {
     return c.json(fail(result.error.issues[0]?.message || '参数错误'), 400);
   }
 
-  const todo = await createTodo(result.data.title);
+  const userId = c.get('userId');
+  const todo = await createTodo(userId, result.data.title);
 
   return c.json(success(todo));
 });
@@ -39,15 +46,17 @@ todoRoute.patch('/:id', async c => {
     return c.json(fail(result.error.issues[0]?.message || '参数错误'), 400);
   }
 
-  const todo = await updateTodo(id, result.data);
+  const userId = c.get('userId');
+  const todo = await updateTodo(userId, id, result.data);
 
   return c.json(success(todo));
 });
 
 todoRoute.delete('/:id', async c => {
   const id = Number(c.req.param('id'));
+  const userId = c.get('userId');
 
-  const result = await deleteTodo(id);
+  const result = await deleteTodo(userId, id);
 
   return c.json(success(result));
 });

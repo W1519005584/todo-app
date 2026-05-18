@@ -2,6 +2,7 @@ import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
+import authRoute from './routes/auth.route';
 import todoRoute from './routes/todo.route';
 
 const app = new Hono();
@@ -10,7 +11,7 @@ app.use(
   '*',
   cors({
     origin: 'http://192.168.1.95:5173',
-    allowMethods: ['GET', 'POST', 'PATCH', 'DELETE'],
+    allowMethods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     allowHeaders: ['Content-Type', 'Authorization'],
   })
 );
@@ -21,6 +22,7 @@ app.get('/', c => {
   });
 });
 
+app.route('/auth', authRoute);
 app.route('/todos', todoRoute);
 
 serve({

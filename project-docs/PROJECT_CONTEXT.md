@@ -1058,3 +1058,161 @@ pnpm add @vue/devtools-api
 ## 所有请求必须经过 API 层
 
 页面不直接请求后端。
+
+---
+
+# 2026-05-18 当前最终状态补充
+
+## request 自动 loading
+
+当前已完成。
+
+设计：
+
+- `apps/client/src/utils/request.ts` 统一管理 loading
+- 每次 `request<T>()` 开始时调用 `appStore.startLoading()`
+- `uni.request.complete` 中调用 `appStore.endLoading()`
+- 同步异常时也会兜底调用 `endLoading()`
+- `apps/client/src/stores/todo.store.ts` 不再手动控制 loading
+- loading 并发仍由 `app.store.ts` 的 `loadingCount` 管理
+
+## 用户与认证系统
+
+当前已完成基础闭环。
+
+后端新增：
+
+- `users` 表
+- `apps/server/src/schemas/auth.schema.ts`
+- `apps/server/src/services/auth.service.ts`
+- `apps/server/src/routes/auth.route.ts`
+- `apps/server/src/utils/jwt.ts`
+
+认证 API：
+
+- `POST /auth/register`
+- `POST /auth/login`
+- `GET /auth/me`
+
+认证返回结构：
+
+- `token`
+- `user`
+
+密码方案：
+
+- Node `crypto.scryptSync`
+- 随机 salt
+- 数据库存储 `salt:hash`
+
+JWT 方案：
+
+- HS256
+- Bearer token
+- 默认开发密钥：`todo-app-dev-secret`
+- 支持 `JWT_SECRET` 环境变量覆盖
+- 默认有效期 7 天
+
+前端新增：
+
+- `apps/client/src/pages/login/index.vue`
+- `apps/client/src/api/auth.ts`
+- `apps/client/src/stores/user.store.ts`
+- `apps/client/src/types/user.ts`
+
+前端当前行为：
+
+- `app.store.ts` 继续负责 token 持久化
+- `user.store.ts` 负责登录、注册、获取当前用户、退出登录
+- 首页无 token 时跳转登录页
+- 登录成功后跳转 Todo 首页
+- `request.ts` 遇到 401 会清理 token 并跳转登录页
+
+## 数据库
+
+当前数据库表：
+
+- `todos`
+- `users`
+
+`users` 字段：
+
+- `id`
+- `username`
+- `password_hash`
+- `nickname`
+- `created_at`
+
+开发阶段为了降低本地联调成本：
+
+- `apps/server/src/db/index.ts` 启动时会 `CREATE TABLE IF NOT EXISTS users`
+- 同时补充了 `drizzle/0001_create_users.sql`
+
+## 当前未完成认证相关内容
+
+- Todo 表尚未绑定 `user_id`
+- Todo API 尚未强制 JWT 鉴权
+- 尚未抽取通用 auth middleware
+- 尚未实现 refresh token
+- 尚未完整接入服务端环境变量管理
+
+---
+
+# 2026-05-18 认证与 Todo 隔离最终状态补充
+
+## auth middleware
+
+当前已完成。
+
+文件：
+
+- `apps/server/src/middlewares/auth.middleware.ts`
+
+职责：
+
+- 读取 `Authorization`
+- 解析 Bearer token
+- 校验 JWT
+- 向 Hono context 写入：
+  - `userId`
+  - `username`
+- token 缺失、无效或过期时返回 401
+
+## Todo API 鉴权
+
+当前已完成。
+
+`apps/server/src/routes/todo.route.ts` 已统一使用 auth middleware。
+
+当前规则：
+
+- `GET /todos` 只返回当前登录用户的数据
+- `POST /todos` 自动写入当前登录用户 `user_id`
+- `PATCH /todos/:id` 只能更新当前登录用户的数据
+- `DELETE /todos/:id` 只能删除当前登录用户的数据
+
+## Todo 数据隔离
+
+当前已完成基础实现。
+
+`todos` 表新增：
+
+- `user_id`
+
+当前为了兼容已有本地数据：
+
+- `user_id` 暂时允许为空
+- 后续完成数据迁移后可改为非空
+
+前端类型已同步：
+
+- `apps/client/src/types/todo.ts`
+- `Todo.userId?: number | null`
+
+## 当前仍未完成
+
+- 统一环境变量模块
+- refresh token
+- 退出登录时清理 Todo store
+- 登录过期体验优化
+- 微信小程序/App 登录专项适配验证

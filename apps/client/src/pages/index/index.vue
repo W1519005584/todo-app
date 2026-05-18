@@ -8,10 +8,12 @@ import { useTodoStore } from '@/stores/todo.store';
 
 import type { Todo } from '@/types/todo';
 import { useAppStore } from '@/stores/app.store';
+import { useUserStore } from '@/stores/user.store';
 
 const appStore = useAppStore();
 
 const todoStore = useTodoStore();
+const userStore = useUserStore();
 
 const loadTodos = async () => {
   await todoStore.fetchTodos();
@@ -33,15 +35,40 @@ const handleDeleteTodo = async (id: number) => {
   await todoStore.deleteTodo(id);
 };
 
-onMounted(() => {
-  loadTodos();
+const handleLogout = () => {
+  userStore.logout();
+};
+
+onMounted(async () => {
+  if (!appStore.token) {
+    uni.redirectTo({
+      url: '/pages/login/index',
+    });
+
+    return;
+  }
+
+  await userStore.fetchCurrentUser();
+
+  if (!appStore.token) {
+    return;
+  }
+
+  await loadTodos();
 });
 </script>
 
 <template>
   <view class="container">
     <view class="header">
-      <text class="title"> Todo App </text>
+      <view>
+        <text class="title"> Todo App </text>
+        <text v-if="userStore.userInfo" class="user">
+          {{ userStore.userInfo.nickname || userStore.userInfo.username }}
+        </text>
+      </view>
+
+      <button class="logout-button" @click="handleLogout">退出</button>
     </view>
 
     <TodoInput @submit="handleAddTodo" />
@@ -70,12 +97,36 @@ page {
 }
 
 .header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24rpx;
   margin-bottom: 40rpx;
 }
 
 .title {
+  display: block;
   font-size: 48rpx;
   font-weight: bold;
+}
+
+.user {
+  display: block;
+  margin-top: 8rpx;
+  color: #666;
+  font-size: 26rpx;
+}
+
+.logout-button {
+  flex: 0 0 auto;
+  width: 120rpx;
+  height: 64rpx;
+  border: 1px solid #ddd;
+  border-radius: 8rpx;
+  background: #fff;
+  color: #333;
+  font-size: 26rpx;
+  line-height: 64rpx;
 }
 
 .loading {

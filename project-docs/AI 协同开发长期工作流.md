@@ -618,3 +618,20 @@ AI 不再依赖：
 ```
 
 这才是长期稳定的 AI 协同开发模式。
+
+***
+
+# 十、当前项目执行补充
+
+本项目当前文档目录为：
+
+```text
+project-docs/
+```
+
+每次继续开发时：
+
+- 先读取 `project-docs/PROJECT_CONTEXT.md`
+- 再读取 `project-docs/CURRENT_TASK.md`
+- 开发完成后同步更新 `project-docs/*` 中与当前状态相关的内容
+- 不要求 AI 自动提交 git，提交前由人工审核

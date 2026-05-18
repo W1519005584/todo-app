@@ -1,5 +1,5 @@
-import type { ApiResponse } from '@/types/request';
 import { useAppStore } from '@/stores/app.store';
+import type { ApiResponse } from '@/types/request';
 
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
@@ -27,51 +27,71 @@ export async function request<T>({
   const appStore = useAppStore();
   const token = appStore.token;
 
+  appStore.startLoading();
+
   return new Promise<ApiResponse<T>>((resolve, reject) => {
-    uni.request({
-      url: `${BASE_URL}${url}`,
+    try {
+      uni.request({
+        url: `${BASE_URL}${url}`,
 
-      method: method as any,
+        method: method as any,
 
-      data,
+        data,
 
-      timeout: 10000,
+        timeout: 10000,
 
-      header: {
-        'Content-Type': 'application/json',
+        header: {
+          'Content-Type': 'application/json',
 
-        Authorization: token ? `Bearer ${token}` : '',
+          Authorization: token ? `Bearer ${token}` : '',
 
-        ...header,
-      },
+          ...header,
+        },
 
-      success: res => {
-        const result = res.data as ApiResponse<T>;
+        success: res => {
+          const result = res.data as ApiResponse<T>;
 
-        if (result.code !== 0) {
+          if (result.code !== 0) {
+            if (result.code === 401 && !url.startsWith('/auth/login')) {
+              appStore.clearToken();
+
+              uni.redirectTo({
+                url: '/pages/login/index',
+              });
+            }
+
+            uni.showToast({
+              title: result.message || '请求失败',
+
+              icon: 'none',
+            });
+
+            reject(result);
+
+            return;
+          }
+
+          resolve(result);
+        },
+
+        fail: err => {
           uni.showToast({
-            title: result.message || '请求失败',
+            title: '网络错误',
 
             icon: 'none',
           });
 
-          reject(result);
+          reject(err);
+        },
 
-          return;
-        }
+        complete: () => {
+          appStore.endLoading();
+        },
+      });
+    } catch (error) {
+      appStore.endLoading();
 
-        resolve(result);
-      },
-
-      fail: err => {
-        uni.showToast({
-          title: '网络错误',
-
-          icon: 'none',
-        });
-
-        reject(err);
-      },
-    });
+      reject(error);
+    }
   });
 }
