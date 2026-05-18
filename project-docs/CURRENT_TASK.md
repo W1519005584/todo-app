@@ -1,122 +1,114 @@
-# 当前开发任务
+# 当前开发目标
 
-## 当前开发目标
+完善 Todo App 工程化架构。
 
-当前目标：
+当前重点：
 
-完成：
-
-```txt
-Todo App 基础工程化版本
-```
-
-包括：
-
-- Store 工程化
-- request 工程化
-- loading
-- error
-- 多端联调
-- 环境变量
-- 状态管理
-
-为后续：
-
-- JWT
-- 用户系统
-- 登录
-- 微信小程序
-- App
-
-做准备。
+- 全局状态管理
+- request 架构
+- Git 工程化
+- 后续 JWT 与用户系统准备
 
 ---
 
 # 当前开发模块
 
-## Todo 模块
+当前模块：
 
-当前包含：
-
-- Todo CRUD
-- Todo API
-- Todo Store
-- Todo 页面
+- app.store.ts
 - request 工程化
+- 全局 loading 架构
 
 ---
 
 # 当前阶段已完成内容
 
-# 前端
+## 前端
 
 已完成：
 
-- uni-app 初始化
-- Vue3 + TS
-- Pinia
-- request 封装
-- request 工程化
-- BASE_URL 环境变量
-- token 自动注入
-- Todo API
-- Todo 页面
+- Todo CRUD 页面
+- Todo 页面组件化
+- todo-input.vue
+- todo-item.vue
+- todo-list.vue
+- empty-state.vue
+- 页面布局修复
+- page 背景方案
 - Todo Store
-- loading 状态
-- error 状态
-- Todo 联调
-- 局域网 H5 联调
+- app.store.ts
+- API 封装
+- request 封装
+- token 初始化
+- loadingCount 架构
+- Pinia 集成
 
 ---
 
-# 后端
+## 后端
 
 已完成：
 
-- Hono 初始化
-- SQLite
+- Todo CRUD API
+- Hono
 - Drizzle ORM
-- drizzle migration
-- Todo CRUD
-- routes 分层
-- services 分层
+- SQLite
 - zod 参数校验
 - response 统一结构
-- CORS 配置
-- 局域网访问支持
+
+---
+
+## 工程化
+
+已完成：
+
+- Monorepo
+- pnpm workspace
+- GitHub 仓库方案
+- main/develop 分支方案
 
 ---
 
 # 当前阶段未完成内容
 
-# 前端
+## request 自动 loading
 
-未完成：
+目标：
 
-- Todo 页面组件化
-- empty-state
-- 下拉刷新
-- tabbar
-- user.store.ts
-- app.store.ts
-- 登录页
-- token 持久化完善
-- 微信小程序适配
-- App 打包
+request.ts 自动 startLoading/endLoading
 
 ---
 
-# 后端
+## JWT
 
-未完成：
+未开始。
 
-- JWT
-- 用户系统
-- 权限
-- 中间件
-- 日志
-- 环境变量管理
-- 错误处理中间件
+---
+
+## 用户系统
+
+未开始。
+
+---
+
+## 登录系统
+
+未开始。
+
+---
+
+## scroll-view 列表
+
+未开始。
+
+---
+
+## 多端适配
+
+未开始：
+
+- 微信小程序
+- App
 
 ---
 
@@ -124,64 +116,55 @@ Todo App 基础工程化版本
 
 当前未确认：
 
-```txt
-手机端是否已完全恢复正常访问
-```
-
-需要继续验证：
-
-- 手机访问 5173
-- 手机请求 3000 API
+- 手机端是否已完全恢复正常访问
+- 手机访问 5173 是否正常
+- 手机请求 3000 API 是否正常
 - 局域网 CORS 是否完全正常
 
 ---
 
 # 下一步开发计划
 
-## 第一优先级
+## 第一阶段
 
-### Todo 页面组件化
+request 自动 loading。
 
-拆分：
+目标：
 
-```txt
-components/
-├─ todo-input.vue
-├─ todo-item.vue
-├─ todo-list.vue
-├─ empty-state.vue
-```
+- request 自动管理 loading
+- store 不再手动控制 loading
 
 ---
 
-## 第二优先级
+## 第二阶段
 
-### app.store.ts
+JWT 登录系统。
 
-负责：
+包括：
 
-- 全局 loading
-- app 初始化
-- 全局状态
+- login API
+- token
+- auth module
+- 用户状态
 
 ---
 
-## 第三优先级
+## 第三阶段
 
-### 用户系统基础
+用户系统。
 
 包括：
 
 - user.store.ts
-- 登录
-- JWT
-- token 管理
+- 用户信息
+- 自动登录
+- 权限控制
 
 ---
 
-## 第四优先级
+## 第四阶段
 
-### 多端适配
+多端适配。
 
 包括：
 
@@ -192,124 +175,52 @@ components/
 
 # 当前涉及的重要文件
 
-# 前端
+## 前端
 
-## request 工程化
-
-```txt
-apps/client/src/utils/request.ts
-```
-
----
-
-## Todo API
-
-```txt
-apps/client/src/api/todo.ts
-```
-
----
-
-## Todo Store
-
-```txt
-apps/client/src/stores/todo.store.ts
-```
-
----
-
-## Todo 页面
-
-```txt
 apps/client/src/pages/index/index.vue
-```
 
----
+apps/client/src/components/todo-input.vue
 
-## Todo 类型
+apps/client/src/components/todo-item.vue
 
-```txt
+apps/client/src/components/todo-list.vue
+
+apps/client/src/components/empty-state.vue
+
+apps/client/src/stores/todo.store.ts
+
+apps/client/src/stores/app.store.ts
+
+apps/client/src/api/todo.ts
+
+apps/client/src/utils/request.ts
+
 apps/client/src/types/todo.ts
-```
 
----
-
-## request 类型
-
-```txt
 apps/client/src/types/request.ts
-```
 
----
+apps/client/src/App.vue
 
-## 环境变量
+apps/client/src/main.ts
 
-```txt
 apps/client/.env.development
-```
 
----
-
-## vite
-
-```txt
 apps/client/vite.config.ts
-```
 
 ---
 
-# 后端
+## 后端
 
-## 服务入口
-
-```txt
 apps/server/src/index.ts
-```
 
----
-
-## Todo 路由
-
-```txt
 apps/server/src/routes/todo.route.ts
-```
 
----
-
-## Todo Service
-
-```txt
 apps/server/src/services/todo.service.ts
-```
 
----
-
-## zod schema
-
-```txt
 apps/server/src/schemas/todo.schema.ts
-```
 
----
-
-## 数据库 schema
-
-```txt
 apps/server/src/db/schema.ts
-```
 
----
-
-## 数据库连接
-
-```txt
 apps/server/src/db/index.ts
-```
 
----
-
-## response 工具
-
-```txt
 apps/server/src/utils/response.ts
-```

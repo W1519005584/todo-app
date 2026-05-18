@@ -1,6 +1,4 @@
-# Todo App 项目上下文
-
-## 项目目标
+# 项目目标
 
 开发一个支持：
 
@@ -48,9 +46,9 @@
 
 ---
 
-# 前端
+## 前端
 
-## 核心
+### 核心
 
 - uni-app
 - Vue3
@@ -59,40 +57,40 @@
 
 ---
 
-## 状态管理
+### 状态管理
 
 - Pinia
 
 ---
 
-## 网络请求
+### 网络请求
 
 - uni.request
 - request 二次封装
 
 ---
 
-## UI
+### UI
 
 当前未接入 UI 库。
 
 ---
 
-# 后端
+## 后端
 
-## Web Framework
+### Web Framework
 
 - Hono
 
 ---
 
-## ORM
+### ORM
 
 - Drizzle ORM
 
 ---
 
-## 数据库
+### 数据库
 
 开发阶段：
 
@@ -100,34 +98,30 @@
 
 数据库文件：
 
-```txt
 apps/server/db/sqlite.db
-```
 
 ---
 
-## 参数校验
+### 参数校验
 
 - zod
 
 ---
 
-# Monorepo 结构
+# monorepo 结构
 
-```txt
 todo-app
 ├─ apps
-│  ├─ client
-│  └─ server
+│ ├─ client
+│ └─ server
 ├─ packages
 ├─ package.json
 ├─ pnpm-workspace.yaml
 └─ pnpm-lock.yaml
-```
 
 ---
 
-# apps / packages 职责
+# apps/packages 职责
 
 ## apps/client
 
@@ -164,13 +158,11 @@ Hono 后端。
 
 后续可能：
 
-```txt
 packages/
 ├─ shared
 ├─ types
 ├─ utils
 ├─ config
-```
 
 当前未启用。
 
@@ -180,47 +172,69 @@ packages/
 
 ## 前端
 
-```txt
 apps/client/src
 ├─ api
-│  └─ todo.ts
+│ └─ todo.ts
+├─ components
+│ ├─ empty-state.vue
+│ ├─ todo-input.vue
+│ ├─ todo-item.vue
+│ └─ todo-list.vue
 ├─ pages
-│  └─ index
-│     └─ index.vue
+│ └─ index
+│ └─ index.vue
 ├─ stores
-│  └─ todo.store.ts
+│ ├─ app.store.ts
+│ └─ todo.store.ts
 ├─ types
-│  ├─ todo.ts
-│  └─ request.ts
+│ ├─ todo.ts
+│ └─ request.ts
 ├─ utils
-│  └─ request.ts
-```
+│ └─ request.ts
+├─ App.vue
+└─ main.ts
 
 ---
 
 ## 后端
 
-```txt
 apps/server/src
 ├─ db
-│  ├─ index.ts
-│  └─ schema.ts
+│ ├─ index.ts
+│ └─ schema.ts
 ├─ routes
-│  └─ todo.route.ts
+│ └─ todo.route.ts
 ├─ schemas
-│  └─ todo.schema.ts
+│ └─ todo.schema.ts
 ├─ services
-│  └─ todo.service.ts
+│ └─ todo.service.ts
 ├─ utils
-│  └─ response.ts
+│ └─ response.ts
 └─ index.ts
-```
 
 ---
 
 # 当前架构设计
 
-# 前端架构
+## 前端架构
+
+当前采用：
+
+Page
+↓
+Component
+↓
+Business Store
+↓
+App Store
+↓
+API
+↓
+Request
+↓
+Backend
+
+---
 
 ## pages
 
@@ -234,6 +248,17 @@ apps/server/src
 
 ---
 
+## components
+
+负责：
+
+- UI
+- 组件交互
+
+不直接请求 API。
+
+---
+
 ## stores
 
 负责：
@@ -242,12 +267,13 @@ apps/server/src
 - loading
 - error
 - action 封装
+- 全局状态
 
 当前：
 
-```txt
-stores/todo.store.ts
-```
+stores/
+├─ todo.store.ts
+└─ app.store.ts
 
 ---
 
@@ -260,9 +286,7 @@ stores/todo.store.ts
 
 当前：
 
-```txt
 api/todo.ts
-```
 
 ---
 
@@ -275,13 +299,14 @@ api/todo.ts
 - 请求统一封装
 - 错误处理
 - toast
-- 超时处理
+- timeout
+- loading 管理
 
 ---
 
-# 后端架构
+## 后端架构
 
-## routes
+### routes
 
 负责：
 
@@ -294,7 +319,7 @@ api/todo.ts
 
 ---
 
-## services
+### services
 
 负责：
 
@@ -303,7 +328,7 @@ api/todo.ts
 
 ---
 
-## schemas
+### schemas
 
 负责：
 
@@ -312,7 +337,7 @@ api/todo.ts
 
 ---
 
-## db
+### db
 
 负责：
 
@@ -328,118 +353,36 @@ api/todo.ts
 
 使用：
 
-```txt
 GET
 POST
 PATCH
 DELETE
-```
 
 ---
 
-# 当前 API
+## 当前 API
 
-## GET /todos
+### GET /todos
 
 获取 Todo 列表。
 
-返回：
-
-```json
-{
-  "code": 0,
-  "message": "success",
-  "data": []
-}
-```
-
 ---
 
-## POST /todos
+### POST /todos
 
 新增 Todo。
 
-返回：
-
-```json
-{
-  "code": 0,
-  "message": "success",
-  "data": [
-    {
-      "id": 1,
-      "title": "todo",
-      "completed": false
-    }
-  ]
-}
-```
-
 ---
 
-## PATCH /todos/:id
+### PATCH /todos/:id
 
 更新 Todo。
 
-返回：
-
-```json
-{
-  "code": 0,
-  "message": "success",
-  "data": [
-    {
-      "id": 1,
-      "title": "todo",
-      "completed": true
-    }
-  ]
-}
-```
-
 ---
 
-## DELETE /todos/:id
+### DELETE /todos/:id
 
 删除 Todo。
-
-返回：
-
-```json
-{
-  "code": 0,
-  "message": "success",
-  "data": null
-}
-```
-
----
-
-# API 响应结构
-
-统一格式：
-
-## 成功
-
-```json
-{
-  "code": 0,
-  "message": "success",
-  "data": ...
-}
-```
-
----
-
-## 失败
-
-```json
-{
-  "code": 400,
-  "message": "错误信息",
-  "data": null
-}
-```
 
 ---
 
@@ -449,20 +392,35 @@ DELETE
 
 - Pinia
 
-当前 Store：
+---
 
-```txt
-stores/todo.store.ts
-```
+## 当前 Store
 
-后续规划：
-
-```txt
 stores/
 ├─ todo.store.ts
-├─ user.store.ts
-├─ app.store.ts
-```
+└─ app.store.ts
+
+---
+
+## todo.store.ts
+
+负责：
+
+- todos
+- error
+- Todo CRUD action
+
+---
+
+## app.store.ts
+
+负责：
+
+- loading
+- loadingCount
+- initialized
+- token
+- app 初始化
 
 ---
 
@@ -470,7 +428,6 @@ stores/
 
 当前数据流：
 
-```txt
 Page
 ↓
 Store
@@ -486,7 +443,10 @@ Service
 Drizzle ORM
 ↓
 SQLite
-```
+
+组件通过 emit 向页面传递事件。
+
+页面通过 store action 调用业务。
 
 ---
 
@@ -496,19 +456,15 @@ SQLite
 
 类型统一放置：
 
-```txt
-src/types
-```
+apps/client/src/types
 
 ---
 
 ## 当前类型文件
 
-```txt
 types/
 ├─ todo.ts
 └─ request.ts
-```
 
 ---
 
@@ -516,9 +472,7 @@ types/
 
 统一：
 
-```ts
 request<T>();
-```
 
 ---
 
@@ -579,9 +533,73 @@ zod 负责：
 
 ---
 
+## Git 分支策略
+
+分支：
+
+- main
+- develop
+
+---
+
+### main
+
+生产稳定分支。
+
+受保护。
+
+禁止直接开发。
+
+---
+
+### develop
+
+功能迭代分支。
+
+当前开发主分支。
+
+---
+
+## 后续功能分支规范
+
+feature/\*
+
+例如：
+
+- feature/auth
+- feature/user-system
+
+---
+
+## Commit 规范
+
+### feat
+
+新功能。
+
+---
+
+### fix
+
+Bug 修复。
+
+---
+
+### refactor
+
+重构。
+
+---
+
+### chore
+
+工程杂项。
+
+---
+
 # 当前代码规范
 
-# 前端
+## 前端
 
 原则：
 
@@ -592,7 +610,16 @@ zod 负责：
 
 ---
 
-# Store
+## components
+
+原则：
+
+- 单一职责
+- UI 与业务分离
+
+---
+
+## Store
 
 负责：
 
@@ -601,9 +628,11 @@ zod 负责：
 - action
 - 状态管理
 
+不负责 UI。
+
 ---
 
-# API
+## API
 
 负责：
 
@@ -612,9 +641,39 @@ zod 负责：
 
 ---
 
-# 后端
+## Request
 
-## route
+统一 request。
+
+禁止页面直接 uni.request。
+
+---
+
+## Vue
+
+统一使用：
+
+<script setup lang="ts">
+
+---
+
+## 样式规范
+
+页面背景使用：
+
+page {}
+
+不使用：
+
+height: 100vh
+
+避免 uni-app 导航栏导致滚动问题。
+
+---
+
+## 后端
+
+### route
 
 负责：
 
@@ -626,7 +685,7 @@ zod 负责：
 
 ---
 
-## service
+### service
 
 负责：
 
@@ -635,7 +694,7 @@ zod 负责：
 
 ---
 
-## schema
+### schema
 
 负责：
 
@@ -647,11 +706,9 @@ zod 负责：
 
 统一：
 
-```txt
 xxx.route.ts
 xxx.service.ts
 xxx.schema.ts
-```
 
 ---
 
@@ -661,74 +718,58 @@ xxx.schema.ts
 
 ### .env.development
 
-```env
 VITE_API_BASE_URL=http://192.168.1.95:3000
-```
 
 ---
-
-# Vite
 
 ## vite.config.ts
 
-```ts
-server: {
-  host: '0.0.0.0',
-  port: 5173,
-}
-```
+server:
+- host: 0.0.0.0
+- port: 5173
 
 ---
 
-# Hono
+## Hono
 
-## index.ts
+### index.ts
 
-```ts
 serve({
   fetch: app.fetch,
   port: 3000,
   hostname: '0.0.0.0',
 });
-```
 
 ---
 
-# CORS
+## CORS
 
 开发阶段：
 
-```ts
 app.use(
   '*',
   cors({
     origin: '*',
   })
 );
-```
+
+---
+
+## token
+
+存储：
+
+uni.setStorageSync
+
+初始化：
+
+app.store.initializeApp()
 
 ---
 
 # 已完成模块
 
-# 后端
-
-已完成：
-
-- Hono 初始化
-- SQLite
-- Drizzle ORM
-- Migration
-- Todo CRUD
-- routes 分层
-- services 分层
-- zod 参数校验
-- response 统一结构
-- CORS 配置
-
----
-
-# 前端
+## 前端
 
 已完成：
 
@@ -742,33 +783,72 @@ app.use(
 - Todo API
 - Todo 页面
 - Todo Store
+- app.store.ts
+- Todo 页面组件化
+- todo-input.vue
+- todo-item.vue
+- todo-list.vue
+- empty-state.vue
 - loading 状态
 - error 状态
+- loadingCount 架构
+- 页面布局修复
+- page 背景方案
 - Todo 联调
 - 局域网 H5 联调
 
 ---
 
+## 后端
+
+已完成：
+
+- Hono 初始化
+- SQLite
+- Drizzle ORM
+- drizzle migration
+- Todo CRUD
+- routes 分层
+- services 分层
+- zod 参数校验
+- response 统一结构
+- CORS 配置
+- 局域网访问支持
+
+---
+
+## 工程化
+
+已完成：
+
+- Monorepo
+- pnpm workspace
+- GitHub 仓库方案
+- Git 分支方案
+- main/develop 分支结构
+
+---
+
 # 当前未完成模块
 
-# 前端
+## 前端
 
 未完成：
 
-- Todo 页面组件化
-- empty-state 组件
+- request 自动 loading
+- 全局错误处理
 - 下拉刷新
 - tabbar
 - user.store.ts
-- app.store.ts
 - 登录页
 - token 持久化完善
 - 微信小程序适配
 - App 打包
+- scroll-view 列表
 
 ---
 
-# 后端
+## 后端
 
 未完成：
 
@@ -844,16 +924,34 @@ store 不再处理 response code。
 
 ---
 
+## loading 使用 loadingCount
+
+避免并发请求导致 loading 冲突。
+
+---
+
+## 页面背景使用 page
+
+不使用 100vh。
+
+避免 uni-app 导航栏导致页面滚动。
+
+---
+
 # 当前已知问题
+
+## request 自动 loading 未完成
+
+当前 loading 仍由 store 手动控制。
+
+---
 
 ## Windows 防火墙
 
 可能阻止：
 
-```txt
-3000
-5173
-```
+- 3000
+- 5173
 
 局域网访问。
 
@@ -863,17 +961,19 @@ store 不再处理 response code。
 
 uni-app TS 类型未完整支持：
 
-```txt
 PATCH
-```
 
 request.ts 使用：
 
-```ts
-method as any;
-```
+method as any
 
 处理。
+
+---
+
+## 多端适配未开始
+
+当前主要验证 H5。
 
 ---
 
@@ -883,15 +983,11 @@ method as any;
 
 错误字段：
 
-```ts
 result.error.issues;
-```
 
 不是：
 
-```ts
 result.error.errors;
-```
 
 ---
 
@@ -899,9 +995,7 @@ result.error.errors;
 
 request 方法统一：
 
-```ts
 request<T>();
-```
 
 ---
 
@@ -909,15 +1003,11 @@ request<T>();
 
 不要写死：
 
-```txt
 localhost
-```
 
 必须使用：
 
-```txt
 VITE_API_BASE_URL
-```
 
 ---
 
@@ -925,21 +1015,15 @@ VITE_API_BASE_URL
 
 前端：
 
-```txt
 5173
-```
 
 后端：
 
-```txt
 3000
-```
 
 必须：
 
-```txt
 0.0.0.0
-```
 
 监听。
 
@@ -949,6 +1033,28 @@ VITE_API_BASE_URL
 
 需要安装：
 
-```bash
 pnpm add @vue/devtools-api
-```
+
+---
+
+## uni-app 页面不要直接使用 100vh
+
+会受导航栏影响导致滚动条。
+
+---
+
+## 页面背景优先使用 page {}
+
+避免 container 高度问题。
+
+---
+
+## request 不允许页面直接调用 uni.request
+
+必须统一封装。
+
+---
+
+## 所有请求必须经过 API 层
+
+页面不直接请求后端。
